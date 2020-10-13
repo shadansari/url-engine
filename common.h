@@ -10,10 +10,13 @@ struct set_rec {
 
 // Stores for a single pattern
 struct pat_rec {
-    char* val;
+    char* hostname;
+    char* pathname;
     struct pat_rec* next;
 };
 
-extern int streamFile(const char *filename, struct set_rec** sets);
+extern int procConf(const char* filename, struct set_rec** sets);
+extern void procUrl(const char* filename, struct set_rec* sets);
+extern void match(const char* hostname, const char* filename, struct set_rec* sets);
 
 #endif

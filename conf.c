@@ -19,7 +19,9 @@ static void processNode(xmlTextReaderPtr reader, struct set_rec** sets) {
 
     } else if (node_type == 3) {
         struct pat_rec* p = malloc(sizeof(struct pat_rec));
-        p->val = (char *)xmlTextReaderValue(reader);
+        char* url = (char *)xmlTextReaderValue(reader);
+        p->hostname = strtok(url, "/");
+        p->pathname = strtok(NULL, "\0");
         p->next = curr_set->pat;
         curr_set->pat = p;
     }
@@ -27,7 +29,7 @@ static void processNode(xmlTextReaderPtr reader, struct set_rec** sets) {
     xmlFree(name);
 }
 
-int streamFile(const char *filename, struct set_rec** sets) {
+int procConf(const char *filename, struct set_rec** sets) {
     xmlTextReaderPtr reader;
     int ret;
 
