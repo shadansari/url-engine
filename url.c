@@ -17,7 +17,7 @@ void procUrl(const char *filename, struct set_rec* sets) {
     for (struct set_rec* s = sets; s != NULL; s = s->next) {
         printf("%s: ", s->val);
         for (struct pat_rec* p = s->pat; p != NULL; p = p->next) {
-            printf("%s:%s ", p->hostname, p->pathname);
+            printf("%s:%s ", p->host, p->path);
         }
         printf("\n");
     }
@@ -28,9 +28,9 @@ void procUrl(const char *filename, struct set_rec* sets) {
 		char *newline = strchr(url, '\n');
 		if (newline)
 			*newline = 0;
-        char *hostname = strtok(url, "/");
-        char* pathname = strtok(NULL, "\0");
-		match(hostname, pathname, sets);
+        char *host = strtok(url, "/");
+        char* path = strtok(NULL, "\0");
+		match(host, path, sets);
 	}
 
 	fclose(fp);

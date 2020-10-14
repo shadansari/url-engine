@@ -1,6 +1,46 @@
 #include <string.h>
 #include <libxml/xmlreader.h>
+#include <assert.h>
 #include "common.h"
+
+// FIXME - hardcoded limit for hostname or pathname
+#define MAXURLSIZE 4096
+char regex_buf[MAXURLSIZE];
+
+static void make_regex(char* str, regex_t* regex) {
+    char *p, *q;
+
+    if (!str)
+        return;
+
+    int i = 0, len = strlen(str);
+
+    assert(strlen(str) < MAXURLSIZE);
+    q = regex_buf;
+    *q++ = '^';
+    for (p=str; i<len; i++,p++) {
+        if (*p == '*') {
+            strncpy(q, "[[:graph:]]*", 12);
+            q += 12;
+        } else if (*p == '.') {
+            strncpy(q, "[.]", 3);
+            q += 3;
+        } else {
+            *q = *p;
+            q++;
+        }
+    }
+    *q++ = '$';
+    *q = '\0';
+
+    int reti = regcomp(regex, regex_buf, 0);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    printf("%s -> %s\n", str, regex_buf);
+}
 
 static void processNode(xmlTextReaderPtr reader, struct set_rec** sets) {
     xmlChar *name;
@@ -20,8 +60,10 @@ static void processNode(xmlTextReaderPtr reader, struct set_rec** sets) {
     } else if (node_type == 3) {
         struct pat_rec* p = malloc(sizeof(struct pat_rec));
         char* url = (char *)xmlTextReaderValue(reader);
-        p->hostname = strtok(url, "/");
-        p->pathname = strtok(NULL, "\0");
+        p->host = strtok(url, "/");
+        make_regex(p->host, &p->host_regex);
+        p->path = strtok(NULL, "\0");
+        make_regex(p->path, &p->path_regex);
         p->next = curr_set->pat;
         curr_set->pat = p;
     }

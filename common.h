@@ -1,5 +1,6 @@
 #ifndef _COMMON_H
 #define _COMMON_H
+#include <regex.h> 
 
 // Store for a set of sets
 struct set_rec {
@@ -10,8 +11,10 @@ struct set_rec {
 
 // Stores for a single pattern
 struct pat_rec {
-    char* hostname;
-    char* pathname;
+    char* host;
+    char* path;
+    regex_t host_regex;
+    regex_t path_regex;
     struct pat_rec* next;
 };
 
