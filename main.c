@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 #include "common.h"
 
 struct set_rec* sets = NULL;
@@ -16,20 +17,30 @@ int main(int argc, char *argv[]) {
 
     while ((opt = getopt(argc, argv, "h")) != -1) {
         switch (opt) {
-            case 'h': usage(); break;
-            case 'a': usage(); break;
+            case 'h': usage(); exit(EXIT_SUCCESS);
             default: usage(); exit(EXIT_FAILURE);
         }
     }
 
-    if (argc - optind != 2) {
+    if (argc - optind == 3) {
+        if (!strcmp(argv[optind], "self")) {
+            printf("The \"self\" matching algorithm is not supported\n");
+            exit(EXIT_FAILURE);
+        } else if (!strcmp(argv[optind], "posix")) {
+            // posix regexp matching is supported
+        } else {
+            usage(); exit(EXIT_FAILURE);
+        }
+        conf = argv[optind+1];
+        url = argv[optind+2];
+    } else if (argc - optind == 2) {
+        conf = argv[optind];
+        url = argv[optind+1];
+    } else {
         printf("Invalid number of arguments\n");
         usage();
         exit(EXIT_FAILURE);
     }
-
-    conf = argv[optind];
-    url = argv[optind+1];
 
     procConf(conf, &sets);
 
