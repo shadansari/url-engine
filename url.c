@@ -13,16 +13,6 @@ void procUrl(const char *filename, struct set_rec* sets) {
         exit(EXIT_FAILURE);
     }
 
-    printf("sets:\n");
-    for (struct set_rec* s = sets; s != NULL; s = s->next) {
-        printf("%s: ", s->val);
-        for (struct pat_rec* p = s->pat; p != NULL; p = p->next) {
-            printf("%s:%s ", p->host, p->path);
-        }
-        printf("\n");
-    }
-
-    printf("urls:\n");
 	while(getline(&url, &len, fp) != -1) {
 		// Remove pesky trailing newline
 		char *newline = strchr(url, '\n');

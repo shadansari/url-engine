@@ -5,7 +5,7 @@
 
 char msgbuf[100];
 
-static int regex_match(regex_t *regex, const char *str) {
+static inline int regex_match(regex_t *regex, const char *str) {
     int reti = regexec(regex, str, 0, NULL, 0);
     if (!reti) {
         return 0;
@@ -14,27 +14,26 @@ static int regex_match(regex_t *regex, const char *str) {
     }
     else {
         regerror(reti, regex, msgbuf, sizeof(msgbuf));
-        fprintf(stderr, "Regex match failed: %s\n", msgbuf);
+        printf("Regex match failed: %s\n", msgbuf);
         exit(1);
     }
 }
 
-void match(const char* hostname, const char* pathname, struct set_rec* sets) {
-	//printf("host:%s path:%s\n", hostname, pathname);
+void match(const char* host, const char* path, struct set_rec* sets) {
+    printf("URL:");
+    path ? printf("%s/%s", host, path) : printf("%s", host);
     for (struct set_rec* s = sets; s != NULL; s = s->next) {
         for (struct pat_rec* p = s->pat; p != NULL; p = p->next) {
-            if (hostname != NULL) {
-                if (!regex_match(&p->host_regex, hostname)) {
-                    if (pathname != NULL) {
-                        if (!regex_match(&p->path_regex, pathname)) {
-                            printf("Match %s/%s -> %s/%s\n", hostname, pathname, p->host, p->path);
-                        }
-                    } else {
-                        printf("Match %s -> %s%s\n", hostname, p->host, p->path?"/p->path":"");
-                    }
+            if (host) {
+                if (!regex_match(&p->host_regex, host)
+                        && (((path) && (!regex_match(&p->path_regex, path)))
+                            || (!path))) {
+                            printf(";Set:%s:Pattern:", s->val);
+                            path ? printf("%s/%s", host, path) : printf("%s", host);
                 }
             }
         }
     }
+    printf("\n");
     return;
 }

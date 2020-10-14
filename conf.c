@@ -39,7 +39,7 @@ static void make_regex(char* str, regex_t* regex) {
         exit(1);
     }
 
-    printf("%s -> %s\n", str, regex_buf);
+    //printf("%s -> %s\n", str, regex_buf);
 }
 
 static void processNode(xmlTextReaderPtr reader, struct set_rec** sets) {
