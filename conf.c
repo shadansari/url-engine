@@ -74,8 +74,15 @@ static void processNode(xmlTextReaderPtr reader, struct set_rec** sets) {
 int procConf(const char *filename, struct set_rec** sets) {
     xmlTextReaderPtr reader;
     int ret;
+    unsigned int len;
+    unsigned char *data;
 
-    reader = xmlNewTextReaderFilename(filename);
+	if ((len = loadfile(filename, &data)) == 0) {
+        fprintf(stderr, "Error: Unable to load %s\n", filename);
+		return 1;
+	}
+
+    reader = xmlReaderForMemory((const char *)data, len, "", NULL, 0);
     if (reader != NULL) {
         ret = xmlTextReaderRead(reader);
         while (ret == 1) {

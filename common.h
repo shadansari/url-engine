@@ -21,7 +21,7 @@ struct pat_rec {
 extern int procConf(const char* filename, struct set_rec** sets);
 extern int procUrl(const char* filename, struct set_rec* sets);
 extern void match(const char* hostname, const char* filename, struct set_rec* sets);
-extern unsigned char *loadfile(const char *fname);
-extern char *sgets(char *s, int n, const unsigned char **strp);
+unsigned int loadfile(const char *fname, unsigned char **buffer);
+extern char *sgets(char *s, int n, unsigned char **strp);
 
 #endif

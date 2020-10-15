@@ -11,29 +11,28 @@
  *  @param fname the character to print
  *  @return On success, a pointer to the mapped area is returned. On error, NULL is returned
  */
-unsigned char *loadfile(const char *fname)
+unsigned int loadfile(const char *fname, unsigned char **buffer)
 {
-	unsigned char *result;
 	unsigned int len;
 	struct stat buf;
 
 	int fd = open(fname,O_RDONLY);
 	if (fd < 0) {
         fprintf(stderr,"Error: Unable to read dictionary file %s\n",fname);
-        return (unsigned char*)0;
+        return 0;
 	}
 
 	if (fstat(fd,&buf) < 0) {
         fprintf(stderr,"Error: Unable to determine file size\n");
-        return (unsigned char*)0;
+        return 0;
 	}
 
 	len = (unsigned int)buf.st_size;
-	result = (unsigned char*)mmap(0,len,PROT_READ,MAP_FILE|MAP_PRIVATE,fd,0);
-	if (result == MAP_FAILED)
-        return (unsigned char*)0;
+	*buffer = (unsigned char*)mmap(0,len,PROT_READ,MAP_FILE|MAP_PRIVATE,fd,0);
+	if (*buffer == MAP_FAILED)
+        return 0;
 
-	return result;
+	return len;
 }
 
 /** @brief
@@ -43,7 +42,7 @@ unsigned char *loadfile(const char *fname)
  *  @param
  *  @return
  */
-char *sgets(char *s, int n, const unsigned char **strp){
+char *sgets(char *s, int n, unsigned char **strp){
 
     if(**strp == '\0')return NULL;
     int i;

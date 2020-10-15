@@ -5,11 +5,11 @@
 #include "common.h"
 
 int procUrl(const char *filename, struct set_rec* sets) {
-    const unsigned char *data;
+    unsigned char *data;
     char buf[256];
-    const unsigned char **p;
+    unsigned char **p;
 
-	if (NULL == (data = loadfile(filename))) {
+	if (loadfile(filename, &data) == 0) {
         fprintf(stderr, "Error: Unable to load %s\n", filename);
 		return 1;
 	}
